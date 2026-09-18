@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "Karthik & Sandhya | 24 & 25 October 2026",
   description: "Join our wedding celebrations at T.M.A Marriage Hall, Thirukarakavur, Papanasam. Two hearts, two families, one beautiful beginning.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/favicon.svg`,
+    shortcut: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/favicon.svg`,
   },
 };
 
