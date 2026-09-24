@@ -1,0 +1,83 @@
+/**
+ * Kolam ornament on PAGE 6.
+ *
+ * Kept out of framer-components.css, which stays byte-for-byte as exported —
+ * same split as page2-kolam.css, page4-sky.css and page7-trim.css. Loaded
+ * after it in App.jsx, so these rules win without needing !important.
+ *
+ * POSITIONING: the kolam sits inside `.framer-2ws2lg` (PAGE 6's DESIGN
+ * layer), a fixed-aspect canvas, so it is placed in PERCENTAGES of that
+ * canvas rather than pixels — it then holds the same spot relative to the
+ * artwork at every breakpoint, like the slots around it.
+ *
+ * Vertical budget on PAGE 6, measured from framer-components.css:
+ *   26%      closing blessing (Tamil + English)
+ *   46–48%   the removed RSVP note's slot  <- the kolam takes this band
+ *   62–64%   WhatsApp button
+ *   bottom   TAP HERE label
+ *
+ * 47% is the middle of the freed band, so the ornament sits centred between
+ * the blessing above and the button below rather than crowding either.
+ *
+ * HOW MUCH ROOM THERE ACTUALLY IS. Measured gap from the blessing's last
+ * line of text to the top of the WhatsApp button, with the kolam hidden:
+ *
+ *      390px    810px    1200px   1440px   1920px
+ *      -34px    +82px    +175px   +232px   +347px
+ *
+ * At the smallest breakpoint the band is already NEGATIVE — the blessing
+ * and the button overlap each other there before any ornament exists. That
+ * is pre-existing and not something this file introduced, but it does mean
+ * there is genuinely nowhere to put a kolam at that size, so it is hidden
+ * below 810px rather than stacked on top of the text. The sizes below are
+ * chosen to leave clear air inside the real band at every other width.
+ *
+ * The transform is NOT set here: Reveal writes `transform` inline on every
+ * render, so a rule in this file would be ignored and the kolam would drop
+ * half its width to the right. It is passed via Reveal's `base` prop in
+ * Page6.jsx instead — the same pattern page2-kolam.css documents.
+ */
+
+.page6-kolam {
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    /* A share of the canvas width, so it scales with the artwork instead of
+       stepping at each breakpoint. Slightly smaller than PAGE 2's kolam:
+       this band is tighter, and the ornament is a quiet divider here rather
+       than the page's closing flourish. */
+    width: clamp(70px, 13%, 150px);
+    /* Ornament only — it must never intercept a tap meant for the WhatsApp
+       button directly below it. */
+    pointer-events: none;
+    /* Above the background image, below the text and button layers. */
+    z-index: 2;
+}
+
+/* Fill the wrapper, overriding the intrinsic width/height attributes the
+   Kolam component renders. Its square viewBox preserves the aspect, so only
+   `width` needs driving here. */
+.page6-kolam .kolam {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Tablet (810–1199px): the band narrows to ~82px, so the ornament is sized
+   down and nudged to sit inside it with air on both sides. */
+@media (min-width: 810px) and (max-width: 1199.98px) {
+    .page6-kolam {
+        top: 50.5%;
+        width: 66px;
+    }
+}
+
+/* Below 810px there is no band to sit in — the blessing and the WhatsApp
+   button already overlap each other at that size (see the measurements
+   above), so an ornament between them would land on top of the text.
+   Hidden rather than crowded. */
+@media (max-width: 809.98px) {
+    .page6-kolam {
+        display: none;
+    }
+}

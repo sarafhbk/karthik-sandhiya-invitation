@@ -1,0 +1,65 @@
+/**
+ * PAGE 4 background colour override.
+ *
+ * The source export gives PAGE 2, PAGE 4 and PAGE 5 a shared rule in
+ * framer-components.css:
+ *
+ *   .framer-m7ulU .framer-djxj6a,
+ *   .framer-m7ulU .framer-6k3h5w,
+ *   .framer-m7ulU .framer-jc4od1 { ... background-color: #fff; ... }
+ *
+ * PAGE 4's own SKY image doesn't cover the full section height, so that
+ * white showed through above/below it — the clouds and temple appeared to
+ * float on a white void instead of a sky.
+ *
+ * `#8acbf3` is sampled directly from the SKY artwork
+ * (public/images/Rt8UBMylAa1Uf8GIPommwOJom8.webp), which is a near-uniform
+ * flat blue top to bottom (#85caf4 -> #8acbf3 -> #85c9f4), so the section
+ * background and the image edges blend with no visible seam.
+ *
+ * Scoped to .framer-6k3h5w only, so PAGE 2 and PAGE 5 keep their white.
+ * Loaded after framer-components.css in App.jsx; the selector matches the
+ * original's specificity and wins on source order alone — no !important
+ * needed, and framer-components.css stays byte-for-byte as exported.
+ */
+.framer-m7ulU .framer-6k3h5w {
+    background-color: #8acbf3;
+}
+
+/**
+ * COUPLE CUT OUT resting position.
+ *
+ * The export gives this element `top: -23%` (and `-80%` at the 810-1199px
+ * breakpoint). Those are NOT resting positions — they are the first frame of
+ * a scroll animation that Framer's hosted runtime drove with a large positive
+ * translateY. Read literally they place the cut-out hundreds of pixels ABOVE
+ * PAGE 4, which is `overflow: clip`, so most of the artwork is sliced off.
+ *
+ * Measured with the old absolute-scrollY parallax, the cut-out was 29%
+ * clipped at 390px the moment the section appeared and sat above the section
+ * top — it "started early" and never fully arrived — while at 1440px the same
+ * formula happened to land correctly. That per-width inconsistency is the bug.
+ *
+ * A percentage `top` resolves against the section's own height, so one value
+ * here holds the same framing at every breakpoint instead of needing a
+ * hardcoded pixel nudge per screen size. 62% places the couple's centre in
+ * the lower-middle of the section, standing on the temple steps, with the
+ * scroll parallax in Page4.jsx adding only a gentle drift either side of it.
+ */
+.framer-m7ulU .framer-yaux2a {
+    top: 62%;
+}
+
+/**
+ * The export re-declares `top: -80%` for this element inside its 810-1199px
+ * media query. A plain rule cannot beat a later media-query rule of equal
+ * specificity, so the same value is restated in a matching query rather than
+ * reaching for !important. Same percentage as above — the point is that ONE
+ * framing rule now applies at every width instead of a different offset per
+ * breakpoint.
+ */
+@media (min-width: 810px) and (max-width: 1199.98px) {
+    .framer-m7ulU .framer-yaux2a {
+        top: 62%;
+    }
+}

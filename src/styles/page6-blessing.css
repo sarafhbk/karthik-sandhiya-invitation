@@ -1,0 +1,56 @@
+/* ---------------------------------------------------------------------------
+   PAGE 6 closing blessing
+   ---------------------------------------------------------------------------
+   This slot was authored for the decorative "Will You / Join Us?" heading —
+   two short words on two lines, in a 164px-wide box (195px / 242px at other
+   breakpoints) whose height came from `aspect-ratio: 1.36667`.
+
+   The couple replaced that with a five-line Tamil + English blessing, which
+   does not fit those dimensions: at 164px the Tamil lines wrapped mid-phrase
+   and the fixed aspect-ratio height clipped the English block entirely.
+
+   Two overrides are needed, and BOTH matter:
+
+   1. `width` — widened so each authored line sits on one line. The lines are
+      the couple's own phrasing, so they must not re-wrap arbitrarily.
+   2. `aspect-ratio: auto` + `height: auto` — releases the height lock so the
+      box grows to fit its content. Note the authored
+      `height: var(--framer-aspect-ratio-supported, 120px)` is misleading:
+      that variable is set to `auto` elsewhere in framer-components.css, so
+      the 120px fallback never applies and, without an explicit
+      aspect-ratio, the height would collapse. Setting `height: auto` with
+      content inside is what gives it a real measured height.
+
+   Selectors carry both the Framer hash and .framer-blessing so they outrank
+   the verbatim Framer rules, which have breakpoint copies later in the
+   cascade and would otherwise win on source order at equal specificity. */
+
+.framer-m7ulU .framer-ubkreq.framer-blessing,
+.framer-m7ulU .framer-1vzggph.framer-blessing {
+    aspect-ratio: auto;
+    height: auto;
+    /* The blessing is centred prose, not a wrapping paragraph — `pre-wrap`
+       from the authored rule would preserve JSX source whitespace as visible
+       gaps between the <span> lines. */
+    white-space: normal;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Desktop / wide / laptop / mobile-large variant. */
+.framer-m7ulU .framer-ubkreq.framer-blessing {
+    width: min(90%, 520px);
+}
+
+/* Smallest breakpoint keeps its own narrower box. */
+.framer-m7ulU .framer-1vzggph.framer-blessing {
+    width: min(92%, 300px);
+}
+
+/* Tamil needs a little more leading than Latin at the same size — the
+   vowel signs and pulli marks sit above and below the base glyph and
+   collide at tight line-heights. */
+.framer-blessing [lang="ta"] {
+    letter-spacing: .01em;
+}

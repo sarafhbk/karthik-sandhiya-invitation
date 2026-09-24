@@ -1,0 +1,68 @@
+/**
+ * Kolam ornament on PAGE 2.
+ *
+ * Kept out of framer-components.css, which stays byte-for-byte as exported
+ * from Framer — same split as page4-sky.css and page7-trim.css. Loaded after
+ * it in App.jsx, so these rules win without needing !important.
+ *
+ * POSITIONING: the kolam sits inside `.framer-gj6wzl` (PAGE 2's DESIGN
+ * layer), which is a fixed-aspect canvas, so the ornament is placed in
+ * PERCENTAGES of that canvas rather than pixels. That way it holds the same
+ * spot relative to the artwork at every breakpoint, exactly like the deity
+ * and the name slots around it.
+ *
+ * Vertical budget on PAGE 2, from the top: deity 23%, blessings + names,
+ * the closing line at 76%, then the "Invite" script heading.
+ *
+ * WHY 82%, NOT THE FOOT OF THE PAGE: a kolam is really drawn on the
+ * threshold, so the very bottom is the instinctive spot — but the background
+ * artwork there is already dense (a carved panel, brass lamps, lotuses and a
+ * temple border), and fine gold line-work laid over it just disappears.
+ * Verified in the browser: at 95% the motif was invisible against the carving.
+ * 82% is the band of clear cream paper below the closing line and above the
+ * "Invite" script — the only spot on this page quiet enough for it to read.
+ */
+
+/* The wrapper is the positioned element. Its `transform` is NOT set here —
+   Reveal owns it (it writes the centring transform inline on every render, so
+   a rule in this file would be ignored). Sizing the wrapper rather than the
+   SVG is what makes the percentage width resolve against the canvas. */
+.page2-kolam {
+    position: absolute;
+    top: 82%;
+    left: 50%;
+    /* A share of the canvas width, so it scales with the artwork rather than
+       stepping at each breakpoint. The clamp keeps it from turning into a
+       speck on a narrow phone or a billboard on a wide desktop. */
+    width: clamp(88px, 17%, 190px);
+    /* Ornament only — it must never intercept a tap meant for the page. */
+    pointer-events: none;
+    /* Above the background image, below the text layers. */
+    z-index: 2;
+}
+
+/* Fill the wrapper, overriding the intrinsic width/height attributes the
+   Kolam component renders. The square viewBox keeps the aspect, so only
+   `width` needs driving here. */
+.page2-kolam .kolam {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* The type below the names sits a little differently on phones, so the motif
+   is nudged down to keep the same optical gap under the closing line. */
+@media (max-width: 809px) {
+    .page2-kolam {
+        top: 84%;
+    }
+}
+
+/* Respect a reduced-motion preference by not animating at all — the draw-in
+   is decorative. (No animation is defined today; this guard documents the
+   intent so a future flourish inherits it.) */
+@media (prefers-reduced-motion: reduce) {
+    .page2-kolam {
+        animation: none;
+    }
+}

@@ -1,0 +1,52 @@
+/**
+ * Overrides for the PAGE 7 trim (Instagram section + "Touch here for magic" +
+ * "@theartfulinvites" removed; countdown moved to the top of the page).
+ *
+ * Kept separate from framer-components.css (which stays byte-for-byte
+ * verbatim from the source export) so the extracted file never needs manual
+ * edits. These rules only touch elements affected by the removal:
+ *
+ * - .framer-ji2yub (MAIN FRAME) and .framer-s1eh8d (PAGE 7's remaining
+ *   section) both size themselves via a fixed CSS `aspect-ratio` against a
+ *   100%-width flex box (--framer-aspect-ratio-supported resolves to `auto`
+ *   in every browser that matters, so the var(...) height fallback was
+ *   already dead — `aspect-ratio` was the real driver). That ratio baked in
+ *   the source's *original* content height, so with content removed it must
+ *   be neutralized back to `auto` or the section keeps its old height as a
+ *   block of blank background (the exact "white space" the user already
+ *   asked to have removed once before, from CanvasScaler's unrelated fix).
+ * - The countdown + its "Counting the Days" caption were absolutely
+ *   positioned (`top: calc(<percent of the old 2135-3416px tall section> -
+ *   <px>)`), which only made sense against that fixed height. With the
+ *   section now auto-sized to content, those percentages are meaningless, so
+ *   both are switched to a simple static, centered flex flow instead.
+ */
+
+.framer-m7ulU .framer-ji2yub {
+    aspect-ratio: auto;
+    height: auto;
+}
+
+.framer-m7ulU .framer-s1eh8d {
+    aspect-ratio: auto;
+    height: auto;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 64px 0;
+}
+
+.framer-m7ulU .framer-uuu3on-container,
+.framer-m7ulU .framer-p0u4y1,
+.framer-m7ulU .framer-kg5lgu,
+.framer-m7ulU .framer-i02xe6 {
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    width: auto;
+    max-width: 90%;
+}

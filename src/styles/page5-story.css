@@ -1,0 +1,171 @@
+/**
+ * PAGE 5 story text slot.
+ *
+ * The slot (.framer-1ffsb99) was authored for a SINGLE short line and is
+ * sized accordingly: 187px wide on mobile, 511px tablet, 630-679px desktop.
+ * The couple replaced that line with a four-line blessing, and the first
+ * line — "With the blessings of our elders and the grace of the divine," —
+ * is longer than any of the other three. Measured against the authored slot
+ * it did not fit at ANY breakpoint, so it wrapped and the text rendered as
+ * five ragged lines instead of the couple's four, splitting their opening
+ * clause mid-phrase.
+ *
+ * Measured line widths vs the slot they had to fit in, before this file:
+ *
+ *              slot    line 1    result
+ *    mobile    187px   170px+    wrapped
+ *    tablet    511px   368px+    wrapped
+ *    desktop   630px   500px+    wrapped
+ *
+ * (The line-1 figures are the width of the FIRST fragment after wrapping,
+ * so the true unwrapped width is larger still — that is why a slot which
+ * looks wide enough on paper was not.)
+ *
+ * WIDTH. `min()` of a percentage and a ceiling: the percentage lets the slot
+ * use the width the artwork actually offers on a given device, while the
+ * ceiling stops the measure from growing so wide on large screens that the
+ * text stops reading as a centred verse. Relative, so it holds on device
+ * sizes not explicitly tested rather than needing a value per phone.
+ *
+ * VERTICAL BUDGET. PAGE 5 is tight: the "Our Story" script heading sits
+ * above this block and the golden photo frame below it. Going from one line
+ * to four adds three line-heights, and measured clearance to the frame fell
+ * to 1-4px at several widths — visually touching. `line-height: 1.45` is
+ * tight enough to claw that back while still leaving the Latin ascenders and
+ * descenders clear of each other, and the slot is nudged up slightly so the
+ * taller block stays centred in the same gap instead of growing downward
+ * into the frame.
+ *
+ * Loaded after framer-components.css in App.jsx; selectors mirror the
+ * original's specificity and win on source order, so no !important is needed
+ * and the exported stylesheet stays byte-for-byte.
+ */
+
+.framer-m7ulU .framer-1ffsb99 {
+    width: min(86%, 620px);
+    /* The authored rules set a fixed height for the one-line version; let the
+       box measure its own four lines instead. */
+    height: auto;
+    aspect-ratio: auto;
+}
+
+/* Tighter leading than the browser default for this size, to fit four lines
+   in a gap authored for one. Applied to the text wrapper rather than the
+   slot so it survives the per-breakpoint font-size changes in Page5.jsx. */
+.framer-m7ulU .framer-1ffsb99 .framer-text {
+    line-height: 1.45;
+}
+
+/* Desktop and wide. The authored slot is 630-679px and the block is three
+   lines taller than the artwork budgeted for, so it is raised a little to
+   keep it centred between the heading and the frame. */
+@media (min-width: 1200px) {
+    .framer-m7ulU .framer-1ffsb99 {
+        width: min(80%, 620px);
+        top: 29%;
+    }
+}
+
+/* Tablet. The tightest measured clearance to the golden frame (1px) was
+   here, so this band gets the largest upward nudge. */
+@media (min-width: 810px) and (max-width: 1199.98px) {
+    .framer-m7ulU .framer-1ffsb99 {
+        width: min(88%, 560px);
+        top: 31%;
+    }
+}
+
+/* Phones. The authored 187px slot is far too narrow for the opening line;
+   a percentage of the artwork width gives it room while staying inside the
+   decorative border on the smallest devices. */
+/**
+ * Phones — anchored to the frame BELOW, not to the section top.
+ *
+ * On this breakpoint the font-size is fixed (6px) while the section height
+ * scales with the viewport, so the text block occupies a BIGGER share of the
+ * section the narrower the device gets — measured 2.5% of section height at
+ * 768px but 6.1% at 320px. The golden frame beneath it, by contrast, starts
+ * at a constant 37.5% at every width.
+ *
+ * A `top` percentage therefore cannot work here: any value that clears the
+ * frame on a small phone wastes space on a large one, and vice versa. Tuning
+ * it moved the collision around instead of removing it (top:30% -> 1px gap at
+ * 440; top:28% -> 5px at 375 and -4px at 320).
+ *
+ * Anchoring the BOTTOM of the slot to a point above the frame's fixed 37.5%
+ * inverts the relationship: the block grows upward into the empty space under
+ * the heading, which is where the slack actually is, and its last line keeps
+ * the same clearance from the frame on every phone regardless of how many
+ * lines it ends up occupying.
+ */
+@media (max-width: 809.98px) {
+    .framer-m7ulU .framer-1ffsb99 {
+        /* 74%, not 86%: the percentage resolves against the SECTION, but the
+           text has to sit inside the cream arch, which is inset from the
+           section edges by the decorative maroon border. At 86% the longest
+           line overran the arch onto that border on the narrowest phones.
+           74% keeps the measure inside the cream panel at every phone width
+           while still being wide enough to hold line 1 unwrapped. */
+        width: 74%;
+        /* Anchored between the "Our Story" heading above and the golden photo
+           frame below (frame top is a constant 37.5% of the section).
+           Reveal writes translate(-50%,-50%) inline, so this percentage is
+           the block's CENTRE, not its top edge.
+           At bottom-anchored values the block drifted up into the heading and
+           into the narrow tapering top of the cream arch, where the available
+           width is much less than at mid-height — that is what pushed the
+           longest line over the border on the smallest phones. Centring it at
+           33% places it in the wide body of the arch, clear of the heading
+           above and the frame below. */
+        /* Reveal writes translate(-50%,-50%) inline, so this is the block's
+           CENTRE. The single line this replaced sat with 5-23px of clearance
+           above the golden frame (measured 320/390/440px); the four-line
+           block is three line-heights taller, so the centre is raised to
+           keep an equivalent gap rather than letting the extra lines grow
+           down into the frame. */
+        top: 27.5%;
+        bottom: auto;
+    }
+}
+
+/**
+ * Very small phones (<=360px).
+ *
+ * The gap between the "Our Story" heading and the golden frame does not
+ * shrink proportionally with the viewport, so on the narrowest devices four
+ * lines at the standard leading left only ~1px above the frame — technically
+ * clear, but visually touching. Tightening the leading to 1.3 buys back
+ * roughly a third of a line of height, which restores a comfortable margin
+ * without shrinking the type (already only 6px here) or moving the block up
+ * into the heading.
+ *
+ * Bounded by max-width so it applies only where the measurements showed it
+ * is needed; 375px and up keep the more generous 1.45.
+ */
+@media (max-width: 360px) {
+    /* The heading/frame gap does not shrink proportionally with the
+       viewport, so the block needs to sit a little higher here to keep a
+       visible margin above the golden frame. */
+    .framer-m7ulU .framer-1ffsb99 {
+        top: 26.5%;
+    }
+
+    .framer-m7ulU .framer-1ffsb99 .framer-text {
+        line-height: 1.3;
+    }
+
+    /* The cream arch TAPERS toward its pointed top, so the usable width at
+       the text's height is well under the section width the slot's
+       percentage resolves against. The opening line is the longest of the
+       four and overran the arch onto the maroon border here, while the three
+       shorter lines fitted.
+       Page5.jsx sets font-size as an INLINE style on .framer-text (a
+       different value per breakpoint variant), which no stylesheet rule can
+       outrank — so the reduction is applied to the inner <p>, which carries
+       no inline size, and inherits down from there. Proportional (em), so it
+       still tracks whichever variant is active rather than pinning a pixel
+       size to one device. */
+    .framer-m7ulU .framer-1ffsb99 .framer-text p {
+        font-size: 0.86em;
+    }
+}

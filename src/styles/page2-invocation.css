@@ -1,0 +1,58 @@
+/**
+ * PAGE 2 invocation (॥ ஸ்ரீ கிருஷ்ணாய நம ॥) — overrides for the template's
+ * `.framer-101gh07` slot.
+ *
+ * Kept out of framer-components.css, which stays byte-for-byte as exported
+ * from Framer — same split as page4-sky.css, page7-trim.css and
+ * page2-kolam.css. Loaded after it in App.jsx, so these rules win on equal
+ * specificity without needing !important.
+ *
+ * TWO FIXES HERE:
+ *
+ * 1. WIDTH. The template authored this slot at `width: 11%` for a shorter
+ *    invocation. The Tamil string is longer and is `white-space: pre`, so the
+ *    trailing "॥" ran past the slot and was cut off — the mark was in the
+ *    content all along, just clipped. 17% fits the full line with both marks
+ *    at every breakpoint.
+ *
+ * 2. VERTICAL POSITION. The template puts this at 27%, where the text box
+ *    actually overlaps the bottom of the deity illustration (measured: -5px
+ *    at 390px canvas, -25px at 1920px). Moved to 27.8%, which clears the
+ *    deity at every breakpoint.
+ *
+ *    27.8% AND NOT FURTHER: there is a hard ceiling here. Directly below sits
+ *    the "With hearts full of joy and gratitude" tagline, and the space
+ *    between the two is tight. Measured clearance from the invocation's
+ *    bottom to the tagline's first line of text:
+ *
+ *              27%      27.8%    28.6%    29.5%
+ *      810px   +18      +7       -5       -18
+ *      1440px  +58      +38      +18      -5
+ *      1920px  +89      +62      +34      +4
+ *
+ *    Anything past ~28% starts colliding with the tagline on smaller
+ *    screens. 27.8% is the largest drop that still clears the deity AND
+ *    keeps the tagline clear from 810px up.
+ *
+ *    (At a 390px canvas the invocation and tagline overlap slightly even at
+ *    the template's original 27% — that is pre-existing and not made worse
+ *    here. Fixing it means moving the tagline itself, which is out of scope.)
+ */
+
+.framer-m7ulU .page2-invocation {
+    /* Was 11% — too narrow for this string, which clipped the closing mark. */
+    width: 17%;
+    /* Was 27%, which overlapped the deity above. See the note above for why
+       this cannot go much further down. */
+    top: 27.8%;
+}
+
+/* Phones: the canvas is much narrower, so the line needs a far larger share
+   of the width to fit on one line with both marks.
+   The vertical position is NOT pushed further here — the gap to the tagline
+   below is at its tightest on small screens, so it keeps the same 27.8%. */
+@media (max-width: 809.98px) {
+    .framer-m7ulU .page2-invocation {
+        width: 46%;
+    }
+}

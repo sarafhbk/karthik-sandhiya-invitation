@@ -1,0 +1,99 @@
+/**
+ * Canvas + main-frame height: content-driven instead of hardcoded.
+ *
+ * THE BUG: the export bakes a literal design height into the canvas at three
+ * of the five breakpoints —
+ *
+ *     base / 1200px   height: 13003px
+ *     810px           height: 8894px
+ *     390px           height: 4811px
+ *     1440px          height: min-content   <- already correct
+ *     1920px          height: min-content   <- already correct
+ *
+ * Those pixel values are snapshots of how tall the page happened to be in
+ * Framer's editor, with the ORIGINAL seven-page deck. This site now renders
+ * six pages (PAGE 7 is not rendered) and PAGE 6 lost its RSVP note, so the
+ * real content is shorter than the baked numbers — but the canvas still
+ * reserved the old height, and the countdown band sits after it.
+ *
+ * Measured gap between the end of the real content and the countdown band,
+ * before this file existed:
+ *
+ *      390px    440px    810px    1200px   1440px   1920px
+ *      +669px   +293px   +1586px  +2457px   0px      0px
+ *
+ * Exactly the breakpoints with a hardcoded height are exactly the ones with
+ * a gap, and the two already using `min-content` had none — which is both the
+ * diagnosis and the fix.
+ *
+ * WHY min-content AND NOT A NEW NUMBER: replacing 4811px with a corrected
+ * constant would re-break the moment any page's height changes (new text, a
+ * different image aspect, another section added or removed) and would need a
+ * separate value per breakpoint — five hardcoded numbers to keep in sync by
+ * hand. `min-content` makes the canvas measure its children, so it is right
+ * at every width automatically and stays right after future edits. It is also
+ * the value Framer itself emitted for the two widest breakpoints, so this
+ * aligns the other three with the export's own working behaviour rather than
+ * inventing a new mechanism.
+ *
+ * Loaded after framer-components.css in App.jsx. Each rule below mirrors the
+ * exact selector and media query of the rule it overrides, so it wins on
+ * source order at equal specificity — no !important, and
+ * framer-components.css stays byte-for-byte as exported.
+ */
+
+/* Base rule — also governs the 1200-1439px band, which has no width-specific
+   height of its own. */
+.framer-m7ulU.framer-72rtr7 {
+    height: min-content;
+}
+
+/* MAIN FRAME. The export pins this with `aspect-ratio: .0855188` plus a
+   hardcoded fallback height, so it keeps its own stale height even once the
+   canvas above is content-driven. Its job is purely to stack the six page
+   sections, and each of those already carries its own aspect-ratio, so the
+   frame itself should simply be as tall as they are. */
+.framer-m7ulU .framer-ji2yub {
+    aspect-ratio: auto;
+    height: min-content;
+}
+
+/* Tablet (810-1199.98px) — overrides the baked 8894px. */
+@media (min-width: 810px) and (max-width: 1199.98px) {
+    .framer-m7ulU.framer-72rtr7 {
+        height: min-content;
+    }
+
+    .framer-m7ulU .framer-ji2yub {
+        aspect-ratio: auto;
+        height: min-content;
+    }
+}
+
+/* Mobile (<=809.98px) — overrides the baked 4811px. */
+@media (max-width: 809.98px) {
+    .framer-m7ulU.framer-72rtr7 {
+        height: min-content;
+    }
+
+    .framer-m7ulU .framer-ji2yub {
+        aspect-ratio: auto;
+        height: min-content;
+    }
+}
+
+/* The two breakpoints the export already had right are restated so the
+   main frame gets the same treatment there — the canvas is left alone. */
+@media (min-width: 1440px) and (max-width: 1919.98px) {
+    .framer-m7ulU .framer-ji2yub {
+        aspect-ratio: auto;
+        height: min-content;
+    }
+}
+
+@media (min-width: 1920px) {
+    .framer-m7ulU .framer-ji2yub {
+        aspect-ratio: auto;
+        height: min-content;
+    }
+}

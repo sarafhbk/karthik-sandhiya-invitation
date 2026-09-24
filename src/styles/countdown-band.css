@@ -1,0 +1,149 @@
+/* Standalone countdown band shown after the last page.
+ *
+ * Deep maroon field with cream type, per the couple's reference design. The
+ * maroon is the same rgb(88, 11, 26) already used for PAGE 6's RSVP text, so
+ * the band reads as part of this invitation rather than a borrowed section.
+ *
+ * Sits outside Framer's fixed-width design canvas, so it sizes against the
+ * viewport (vw/clamp) rather than a container query.
+ */
+
+.cdb {
+    --cdb-maroon: rgb(88, 11, 26);
+    --cdb-cream: rgb(247, 240, 232);
+
+    box-sizing: border-box;
+    width: 100%;
+    padding: clamp(48px, 8vw, 96px) clamp(20px, 5vw, 64px);
+    background: var(--cdb-maroon);
+    color: var(--cdb-cream);
+    text-align: center;
+}
+
+.cdb-eyebrow {
+    margin: 0 0 clamp(14px, 2.2vw, 22px);
+    font-family: "Jost", sans-serif;
+    font-size: clamp(10px, 1.1vw, 12px);
+    font-weight: 500;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    opacity: .72;
+}
+
+.cdb-heading {
+    margin: 0 0 clamp(30px, 5vw, 56px);
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    font-size: clamp(32px, 5.6vw, 64px);
+    line-height: 1.1;
+    letter-spacing: .01em;
+}
+
+.cdb-units {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    /* No gap: the hairline separators below own the spacing, so the rules sit
+       exactly midway between adjacent units. */
+    gap: 0;
+    margin: 0 auto;
+    max-width: 760px;
+}
+
+.cdb-unit {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(6px, 1vw, 12px);
+    padding: 0 clamp(6px, 2vw, 26px);
+}
+
+/* Hairline between units, never before the first. */
+.cdb-unit + .cdb-unit {
+    border-left: 1px solid rgba(247, 240, 232, .26);
+}
+
+.cdb-value {
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    font-size: clamp(38px, 7.2vw, 82px);
+    line-height: 1;
+    /* Keeps the digits from shifting width as they tick. */
+    font-variant-numeric: tabular-nums;
+}
+
+.cdb-label {
+    font-family: "Jost", sans-serif;
+    font-size: clamp(8px, 1vw, 11px);
+    font-weight: 500;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+.cdb-footnote {
+    margin: clamp(26px, 4vw, 44px) 0 0;
+    font-family: "Jost", sans-serif;
+    font-size: clamp(11px, 1.2vw, 13px);
+    letter-spacing: .08em;
+    opacity: .62;
+}
+
+/* Closing monogram — the couple's initials either side of a heart, sitting at
+   the very foot of the page as a sign-off. Same cream-on-maroon and the same
+   clamp() scaling as everything else in this band, so it holds its
+   proportions from a 320px phone up to a 1920px desktop with no breakpoints
+   of its own. */
+.cdb-monogram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 1.4vw, 16px);
+    /* Generous space above so it reads as a separate closing flourish rather
+       than a trailing part of the date line. */
+    margin-top: clamp(34px, 5vw, 60px);
+    color: var(--cdb-cream);
+    /* Slightly held back so the countdown itself stays the loudest thing in
+       the band. */
+    opacity: .82;
+}
+
+/* "K" is a noticeably wider glyph than "S", so centring the group as a whole
+   would leave the heart sitting right of the page centre by half that
+   difference (~3.6px at desktop size). Giving both letters the same width and
+   letting each align toward the heart puts the HEART on the centre line,
+   which is what the eye actually reads as centred. `ch` scales with the font
+   so this holds at every clamp() size. */
+.cdb-monogram-letter {
+    font-family: "Instrument Serif", serif;
+    font-size: clamp(26px, 3.6vw, 44px);
+    line-height: 1;
+    /* Must be at least as wide as the WIDEST of the two glyphs, or that one
+       overflows its box and shunts the heart off-centre again. Measured: "K"
+       is 0.72em in Instrument Serif; 0.78em leaves a little headroom for
+       other initials should the names ever change. */
+    flex: 0 0 .78em;
+}
+
+.cdb-monogram-letter:first-of-type {
+    text-align: right;
+}
+
+.cdb-monogram-letter:last-of-type {
+    text-align: left;
+}
+
+.cdb-monogram-heart {
+    /* Sized off the letters (em, not a fixed px) so the two always scale
+       together. ~0.62em keeps the heart visually lighter than the capitals —
+       matching their full height would make it shout. */
+    width: .62em;
+    height: .62em;
+    font-size: clamp(26px, 3.6vw, 44px);
+    /* Serif capitals sit on a baseline; nudging the heart down centres it
+       against the letterforms rather than the line box. */
+    margin-top: .06em;
+    flex: none;
+}

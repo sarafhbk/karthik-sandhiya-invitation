@@ -1,0 +1,68 @@
+/**
+ * "TAP HERE" label placement on PAGE 6.
+ *
+ * THE BUG: the label and the button it labels are anchored to DIFFERENT
+ * edges, using different units.
+ *
+ *     WhatsApp button (.framer-1i3op6x-container)  top: 64%    <- proportional
+ *     TAP HERE        (.framer-5l908n)             bottom: 132px <- fixed px
+ *
+ * A percentage top scales with the section; a pixel bottom does not. PAGE 6's
+ * height is aspect-ratio driven, so it varies hugely with width (measured:
+ * 244px at 390 wide, 506px at 810, 900px at 1440). The two anchors therefore
+ * drift relative to each other, and at 810px they cross: the label's box
+ * started 39px ABOVE the bottom of the button, so "TAP HERE" rendered over
+ * the button instead of under it.
+ *
+ * Measured gap from the button's bottom edge to the top of the label, before
+ * this file existed (negative = overlapping):
+ *
+ *      390px    440px    810px    1200px   1440px
+ *      +44px    +57px    -39px    +49px    +103px
+ *
+ * THE FIX: anchor the label to the same edge, in the same unit, as the thing
+ * it belongs to. `top: 72%` sits a constant 8% of the section below the
+ * button's 64%, so the label trails the button by a proportional amount at
+ * every width instead of being computed from the opposite edge. One rule, no
+ * per-breakpoint pixel nudges, and it stays correct if the section's aspect
+ * ratio or the button's position is ever changed.
+ *
+ * `bottom: auto` is required: the export sets `bottom`, and with both `top`
+ * and `bottom` set on an absolutely positioned element the pair would stretch
+ * the box rather than place it.
+ *
+ * Loaded after framer-components.css in App.jsx; selectors mirror the
+ * originals so they win on source order at equal specificity, with no
+ * !important and no edit to the exported stylesheet.
+ */
+
+.framer-m7ulU .framer-5l908n {
+    top: 72%;
+    bottom: auto;
+}
+
+/* The export re-declares this element inside its own media queries (setting
+   `left`, and at <=809.98px a `bottom: 13px`). Those later rules would win
+   over the base rule above, so the same placement is restated in matching
+   queries — identical value each time, because the whole point is that one
+   proportional offset now serves every breakpoint. */
+/* Tablet band. 70% rather than the 72% used elsewhere: this breakpoint has
+   the tightest ratio of content to section height in the whole range — the
+   label is 102px tall in a 506px section at 810px wide, and at 72% its
+   bottom edge landed 1px past the section's `overflow: clip` boundary, so
+   the descenders were shaved. 70% clears it with room to spare and is still
+   proportional, so it holds across the entire 810-1199px band rather than
+   only at the width it was measured on. */
+@media (min-width: 810px) and (max-width: 1199.98px) {
+    .framer-m7ulU .framer-5l908n {
+        top: 70%;
+        bottom: auto;
+    }
+}
+
+@media (max-width: 809.98px) {
+    .framer-m7ulU .framer-5l908n {
+        top: 72%;
+        bottom: auto;
+    }
+}

@@ -1,0 +1,134 @@
+/* One-shot flower rain over PAGE 2.
+ *
+ * Two separate animations are composed on nested elements rather than being
+ * merged into one keyframe set:
+ *   .fr-petal  — vertical fall + horizontal drift (the travel)
+ *   .fr-petal svg — sway + spin (the tumble)
+ * Splitting them lets the sway run on its own period, independent of the fall
+ * duration, which is what stops the field looking mechanical. Merging them
+ * would force one shared timeline.
+ *
+ * Everything is driven by CSS custom properties set per-petal in
+ * FlowerRain.jsx, so all petals share these two rules.
+ */
+
+.fr-layer {
+    position: absolute;
+    inset: 0;
+    /* Above PAGE 2's artwork but below nothing interactive — the layer is
+       inert, see pointer-events. */
+    z-index: 5;
+    /* Clipped by PAGE 2's own `overflow: clip`, but also clip here so a petal
+       drifting sideways never widens the page and triggers a scrollbar. */
+    overflow: hidden;
+    /* Critical: the rain must never intercept taps or text selection on the
+       invitation underneath it. */
+    pointer-events: none;
+    /* Opacity is written per-frame by FlowerRain's scroll handler to fade the
+       rain out over the last fifth of PAGE 2. A short transition smooths the
+       steps between frames without lagging the scroll. */
+    opacity: 1;
+    transition: opacity 120ms linear;
+    will-change: opacity;
+}
+
+.fr-petal {
+    position: absolute;
+    /* Start just above the top edge so petals enter from off-screen rather
+       than popping into existence at y=0. */
+    top: -6%;
+    width: var(--fr-size);
+    height: var(--fr-size);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation:
+        fr-fall var(--fr-fall) linear var(--fr-delay) 1 both,
+        fr-fade var(--fr-fall) ease-in-out var(--fr-delay) 1 both;
+}
+
+/* Sway sits on its own element so each animation owns `transform` outright on
+   a single node. Composing them via the independent `rotate` longhand would
+   be tidier, but that property is unsupported in Safari < 14.1, where the
+   spin would silently not run. */
+.fr-sway {
+    display: block;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    /* Shares the petal's delay so the tumble begins with the fall, but runs
+       on its own shorter period and alternates. */
+    animation: fr-sway var(--fr-sway) ease-in-out var(--fr-delay) infinite alternate;
+}
+
+.fr-petal svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    animation: fr-spin var(--fr-fall) linear var(--fr-delay) 1 both;
+}
+
+/* Vertical travel. 112vh (not 100%) so a petal clears the bottom edge
+   completely before the animation ends, whatever PAGE 2's rendered height. */
+@keyframes fr-fall {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(var(--fr-drift), 112vh, 0);
+    }
+}
+
+/* Fade in as the petal enters, hold, then fade out before it lands — so no
+   petal ever visibly clips off at the bottom edge. */
+@keyframes fr-fade {
+    0% {
+        opacity: 0;
+    }
+
+    8% {
+        opacity: var(--fr-opacity);
+    }
+
+    82% {
+        opacity: var(--fr-opacity);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Horizontal wobble, layered on top of the fall's overall drift. */
+@keyframes fr-sway {
+    from {
+        transform: translateX(-14px);
+    }
+
+    to {
+        transform: translateX(14px);
+    }
+}
+
+/* Tumble. Runs on the inner <svg>, one level below the sway, so each element
+   has exactly one animation writing its `transform`. */
+@keyframes fr-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(var(--fr-spin));
+    }
+}
+
+/* Never rain on readers who asked for reduced motion. FlowerRain.jsx also
+   checks this in JS and skips mounting entirely; this is belt-and-braces for
+   the case where the preference changes after mount. */
+@media (prefers-reduced-motion: reduce) {
+
+    .fr-layer {
+        display: none;
+    }
+}

@@ -1,0 +1,127 @@
+/* "Back to top" control — an inline strip at the very bottom of the page.
+ *
+ * Previously this was a fixed button pinned to the bottom-right corner. It is
+ * now in normal document flow after the countdown band, so it appears only
+ * when the reader reaches the end: no `position: fixed`, no z-index race with
+ * the music player, nothing floating over the artwork.
+ *
+ * Palette is the invitation's existing maroon/cream pair (the same
+ * rgb(88, 11, 26) / rgb(247, 240, 232) used by the countdown band and PAGE 6's
+ * RSVP text) so the control reads as part of the design rather than browser
+ * chrome. Jost at wide tracking matches the eyebrow/label type already used
+ * across the band and event cards.
+ *
+ * Sits outside Framer's fixed-width design canvas, so it spans the viewport
+ * rather than the canvas.
+ */
+
+/* The strip. Same maroon as the countdown band directly above it, so the two
+   read as one continuous footer rather than two stacked blocks.
+   NOTE the asymmetric padding: the countdown band already ends with its own
+   generous bottom padding, so matching that on top here would leave an
+   obvious gap between the band's last line and this button. The top inset is
+   deliberately the smaller of the two. */
+.btt-bar {
+    display: flex;
+    justify-content: center;
+    padding: 4px 16px 40px;
+    background: rgb(88, 11, 26);
+}
+
+.btt {
+    display: inline-flex;
+    align-items: center;
+    gap: .5em;
+
+    margin: 0;
+    padding: 10px 18px;
+    border: 1px solid rgba(247, 240, 232, .32);
+    border-radius: 999px;
+    /* Transparent against the strip it sits on — the border alone carries the
+       shape, so the control reads as part of the band instead of a chip
+       stuck on top of it. */
+    background: transparent;
+    color: rgb(247, 240, 232);
+
+    font-family: "Jost", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+
+    cursor: pointer;
+    transition: background .25s ease, border-color .25s ease;
+}
+
+.btt:hover {
+    background: rgba(247, 240, 232, .1);
+    border-color: rgba(247, 240, 232, .6);
+}
+
+/* Keyboard focus must stay clearly visible against the maroon band. */
+.btt:focus-visible {
+    outline: 2px solid rgb(247, 240, 232);
+    outline-offset: 2px;
+}
+
+.btt-arrow {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Phones.
+ *
+ * THE COLLISION: the music player is `position: fixed` at bottom-left (24px
+ * inset, ~82px wide), and this button is centred in the strip. As the screen
+ * narrows the button's left edge marches toward the player until they meet.
+ * Measured clearance between the player's right edge and the button's left:
+ *
+ *      320px    360px    390px    440px    600px
+ *      -14px     +8px    +21px    +46px   +128px
+ *
+ * So on a 320px phone the player sat ON the button, and at 360px they were
+ * 8px apart — visibly crowded, and an easy mis-tap between two controls that
+ * do very different things.
+ *
+ * THE FIX: give the strip enough height that the button clears the player
+ * vertically instead of fighting it horizontally. The player occupies the
+ * bottom ~80px of the viewport (56px control + 24px inset), so the strip's
+ * bottom padding is set past that and the button is pushed above it. This is
+ * expressed as a single padding value rather than a per-width nudge, so it
+ * holds at any phone size, including ones not tested.
+ *
+ * Horizontal centring is kept — the button stays centred in the strip, which
+ * is what makes it read as a footer control rather than something wedged
+ * beside the player.
+ */
+@media (max-width: 809.98px) {
+    .btt-bar {
+        /* The button stays centred (it sits directly under the centred
+           closing monogram, and shifting it right to dodge the player looked
+           obviously misaligned). So the clearance has to be VERTICAL.
+           The music player is fixed in the bottom-left: 58px tall at
+           bottom:24px, so it covers the last 82px of the viewport, and on a
+           320px screen it is wide enough to reach across into the centred
+           button's left edge. Ending the band 88px below the button puts the
+           button above the player's band entirely at every width, with 6px
+           to spare — down from the previous 96px, which cleared it by more
+           than was needed. */
+        padding: 14px 16px 88px;
+    }
+
+    .btt {
+        padding: 9px 15px;
+        font-size: 11px;
+        letter-spacing: .12em;
+    }
+}
+
+/* The reduced-motion scroll itself is handled in BackToTop.jsx; this only
+   removes the button's own hover transition. */
+@media (prefers-reduced-motion: reduce) {
+    .btt {
+        transition: none;
+    }
+}

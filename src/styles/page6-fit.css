@@ -1,0 +1,82 @@
+/**
+ * PAGE 6 minimum height on phones.
+ *
+ * THE BUG: PAGE 6 is sized by `aspect-ratio: 1.6`, so its height is derived
+ * purely from the viewport width. On a phone that leaves very little room:
+ *
+ *      320px wide -> 200px tall
+ *      375px wide -> 234px tall
+ *      440px wide -> 275px tall
+ *
+ * but the section has to hold a four-line blessing, the WhatsApp button and
+ * the "TAP HERE" label. It does not fit, and because the section is
+ * `overflow: clip` the label was sliced off the bottom on EVERY phone tested
+ * (measured overhang: -38px at 320, -31px at 360, -25px at 390, -17px at
+ * 440). The narrower the device, the worse it got — the opposite of what a
+ * mostly-mobile audience needs.
+ *
+ * THE FIX: keep the aspect ratio as the *preferred* height but stop it
+ * shrinking below what the content needs. `min-height` with a `max()` of a
+ * viewport-relative value and an absolute floor means:
+ *
+ *   - 92vw  scales with the device, so a wider phone still gets a
+ *     proportionally taller panel and the artwork keeps its framing;
+ *   - 360px is the floor for very narrow/short devices (320px-wide phones,
+ *     and foldables in their folded state) where 92vw alone is still too
+ *     small for the text block.
+ *
+ * Both are relative/derived rather than a per-device pixel table, so this
+ * holds for phone sizes not explicitly tested — including future ones.
+ *
+ * Scoped to <=809.98px: tablets and desktops already have ample height from
+ * the aspect ratio (506px at 810, 900px at 1440) and are left untouched, so
+ * this cannot regress those views.
+ *
+ * `height: auto` is needed alongside it because the export sets an explicit
+ * `height` via --framer-aspect-ratio-supported; without clearing that, the
+ * fixed height wins and min-height never gets the chance to apply.
+ *
+ * Loaded after framer-components.css in App.jsx, selector mirrors the
+ * original's specificity so it wins on source order — no !important, and the
+ * exported stylesheet stays byte-for-byte.
+ */
+
+@media (max-width: 809.98px) {
+    .framer-m7ulU .framer-iobn9w {
+        height: auto;
+        min-height: max(360px, 92vw);
+    }
+
+    /* The inner DESIGN layer is absolutely positioned and separately sized by
+       the export, so it has to follow the section or the background artwork
+       would stop short of the new height and leave a band of bare colour. */
+    .framer-m7ulU .framer-2ws2lg {
+        height: 100%;
+        min-height: max(360px, 92vw);
+    }
+
+    /* ---- Redistribute the content for the taller panel ------------------
+       Every element in this section is absolutely positioned by percentage,
+       and those percentages were authored against the ORIGINAL short
+       aspect-ratio height. Once the panel grows, the same percentages no
+       longer divide it sensibly: measured against the new height the
+       blessing landed at -2px (clipped off the top edge) while the extra
+       space piled up unused in the middle.
+
+       These three values re-space the group down the taller panel — the
+       blessing clear of the top edge, the button in the middle, the label
+       under it, each still a percentage so it keeps scaling with the device
+       rather than being pinned to any one phone's pixel size. */
+    .framer-m7ulU .framer-1vzggph.framer-blessing,
+    .framer-m7ulU .framer-ubkreq.framer-blessing {
+        top: 14%;
+    }
+
+    .framer-m7ulU .framer-1i3op6x-container {
+        top: 52%;
+    }
+
+    .framer-m7ulU .framer-5l908n {
+        top: 64%;
+    }
+}

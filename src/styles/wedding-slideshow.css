@@ -1,0 +1,547 @@
+/* PAGE 3 — wedding event card (ceremony schedule + venue).
+ *
+ * Replaces the original "Wedding Event Slideshow" styles; the photo gallery
+ * this file used to support has been removed.
+ *
+ * Palette is the site's existing navy/gold on warm paper. Sizing uses clamp()
+ * throughout so the card scales smoothly between the 390px and 1920px design
+ * breakpoints without a JS resize listener.
+ *
+ * Breakpoints are driven by the CARD's own width (container query) where
+ * supported, because this card sits inside Framer's fixed-width design canvas
+ * — the viewport width alone is not a reliable proxy for how much room the
+ * card actually has. A max-width media query provides the fallback.
+ */
+
+.wec-card {
+    --wec-navy: rgb(10, 48, 127);
+    --wec-gold: rgb(215, 162, 42);
+    --wec-ink: rgb(47, 36, 23);
+    --wec-paper: rgb(255, 252, 247);
+    --wec-panel: rgba(10, 48, 127, 0.04);
+    --wec-hairline: rgba(10, 48, 127, 0.16);
+
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: clamp(18px, 2.4vw, 30px);
+    border-radius: clamp(24px, 3vw, 40px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 250, 242, .96));
+    box-shadow: 0 12px 40px rgba(45, 28, 10, .14);
+    color: var(--wec-ink);
+    container-type: inline-size;
+}
+
+/* Inner engraved frame — a fine double rule, echoing a printed card. */
+.wec-inner {
+    border: 1px solid var(--wec-hairline);
+    border-radius: clamp(16px, 2.2vw, 28px);
+    box-shadow: inset 0 0 0 3px rgba(215, 162, 42, .28);
+    padding: clamp(24px, 4vw, 52px) clamp(18px, 3.4vw, 48px);
+    text-align: center;
+}
+
+/* ---- Heading ---------------------------------------------------------- */
+
+/* `.wec-byline` ("Together with our families") lived here; the element was
+   removed from WeddingEventCard, so the rule went with it. */
+
+.wec-eyebrow {
+    margin: 0 0 6px;
+    font-family: "Jost", sans-serif;
+    font-size: clamp(10px, 1cqw, 12px);
+    font-weight: 600;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--wec-gold);
+}
+
+.wec-title {
+    margin: 0;
+    font-family: "Philosopher", sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 5.4cqw, 60px);
+    line-height: 1.05;
+    letter-spacing: -.01em;
+    color: var(--wec-ink);
+}
+
+.wec-lede {
+    margin: clamp(8px, 1.4vw, 14px) auto 0;
+    max-width: 46ch;
+    font-family: "Jost", sans-serif;
+    font-size: clamp(14px, 1.45cqw, 16px);
+    line-height: 1.5;
+    color: var(--wec-ink);
+    opacity: .82;
+}
+
+/* ---- Ornamental divider ----------------------------------------------- */
+
+.wec-flourish {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: clamp(22px, 3.4vw, 38px) auto;
+    max-width: 320px;
+}
+
+.wec-flourish span {
+    flex: 1 1 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--wec-gold));
+    opacity: .6;
+}
+
+.wec-flourish span:last-child {
+    background: linear-gradient(90deg, var(--wec-gold), transparent);
+}
+
+/* ---- Schedule --------------------------------------------------------- */
+
+.wec-schedule {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 1.8vw, 18px);
+    text-align: left;
+}
+
+.wec-day {
+    display: grid;
+    /* Date rail | ceremonies */
+    grid-template-columns: clamp(86px, 13cqw, 124px) minmax(0, 1fr);
+    gap: clamp(12px, 2vw, 24px);
+    align-items: stretch;
+    padding: clamp(14px, 2.2vw, 22px);
+    border-radius: clamp(14px, 1.8vw, 22px);
+    background: var(--wec-panel);
+}
+
+/* Date rail */
+.wec-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding-right: clamp(10px, 1.6vw, 18px);
+    border-right: 1px solid var(--wec-hairline);
+    text-align: center;
+}
+
+.wec-date-num {
+    font-family: "Philosopher", sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 5cqw, 54px);
+    line-height: 1;
+    color: var(--wec-ink);
+}
+
+.wec-date-month {
+    font-family: "Jost", sans-serif;
+    font-size: clamp(11px, 1.1cqw, 13px);
+    font-weight: 600;
+    letter-spacing: .22em;
+    color: var(--wec-ink);
+    opacity: .8;
+}
+
+.wec-date-rule {
+    width: 26px;
+    height: 1px;
+    margin: 7px 0 6px;
+    background: var(--wec-gold);
+    opacity: .7;
+}
+
+.wec-date-weekday {
+    font-family: "Jost", sans-serif;
+    font-size: clamp(9px, .92cqw, 11px);
+    font-weight: 500;
+    letter-spacing: .2em;
+    color: var(--wec-navy);
+    opacity: .7;
+}
+
+/* Ceremonies for one day */
+.wec-events {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.wec-event {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(10px, 1.4vw, 16px);
+    padding: clamp(9px, 1.3vw, 13px) 0;
+}
+
+/* Hairline between ceremonies within the same day, never after the last. */
+.wec-event + .wec-event {
+    border-top: 1px solid var(--wec-hairline);
+}
+
+.wec-event-icon {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(34px, 4cqw, 42px);
+    height: clamp(34px, 4cqw, 42px);
+    border-radius: 999px;
+    background: rgba(215, 162, 42, .14);
+    color: var(--wec-gold);
+}
+
+.wec-event-icon svg {
+    width: 58%;
+    height: 58%;
+}
+
+.wec-event-principal .wec-event-icon {
+    background: rgba(10, 48, 127, .1);
+    color: var(--wec-navy);
+}
+
+.wec-event-body {
+    min-width: 0;
+}
+
+.wec-event-name {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 9px;
+    font-family: "Philosopher", sans-serif;
+    font-weight: 700;
+    font-size: clamp(17px, 2.1cqw, 23px);
+    line-height: 1.2;
+    color: var(--wec-ink);
+}
+
+.wec-event-principal .wec-event-name {
+    color: var(--wec-navy);
+}
+
+.wec-event-tamil {
+    font-family: "Philosopher", sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 1.3cqw, 15px);
+    opacity: .7;
+}
+
+.wec-event-time {
+    margin: 5px 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Jost", sans-serif;
+    font-size: clamp(13px, 1.35cqw, 15px);
+    font-weight: 500;
+    color: var(--wec-ink);
+    opacity: .82;
+}
+
+.wec-event-time svg {
+    color: var(--wec-gold);
+}
+
+/* ---- Venue ------------------------------------------------------------ */
+
+/* A flex column, not a text-align:center block. The address and the CTA are
+   both inline-level, so in a plain block they shared one inline row and the
+   button overlapped the address text. Stacking them here guarantees each
+   owns its own line at every width. */
+.wec-venue {
+    margin-top: clamp(22px, 3.2vw, 34px);
+    padding-top: clamp(22px, 3.2vw, 32px);
+    border-top: 1px solid var(--wec-hairline);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.wec-venue-name {
+    margin: 0;
+    font-family: "Philosopher", sans-serif;
+    font-weight: 700;
+    font-size: clamp(24px, 3.4cqw, 38px);
+    line-height: 1.15;
+    color: var(--wec-ink);
+}
+
+.wec-venue-address {
+    margin: clamp(8px, 1.2vw, 12px) 0 clamp(18px, 2.6vw, 26px);
+    display: flex;
+    /* flex-start, not center: on a narrow card the address wraps to two lines
+       and a centred pin would float in the middle of the block instead of
+       sitting beside the first line. */
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+    /* Keeps the address from running the full width of a 1100px card. */
+    max-width: 42ch;
+    font-family: "Jost", sans-serif;
+    font-size: clamp(13px, 1.4cqw, 16px);
+    line-height: 1.45;
+    color: var(--wec-ink);
+    opacity: .85;
+}
+
+.wec-venue-address svg {
+    color: var(--wec-gold);
+    /* Nudge the pin onto the first line's optical centre. */
+    margin-top: .15em;
+}
+
+/* Button centred on the card's axis, QR pinned to the right edge.
+   A three-column grid rather than flexbox: with `justify-content: center`
+   the button and QR were centred *as a pair*, which pushed the button
+   visibly left of centre. The empty first column mirrors the QR column's
+   width, so the middle column — and the button in it — lands on the card's
+   true centre line regardless of how wide the QR renders. */
+.wec-venue-actions {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(16px, 2.6vw, 28px);
+}
+
+/* Button occupies the centre column. */
+.wec-venue-actions .wec-cta {
+    grid-column: 2;
+}
+
+/* QR takes the right column and sits hard against its right edge. */
+.wec-venue-actions .wec-qr {
+    grid-column: 3;
+    justify-self: end;
+}
+
+/* Deliberately no panel, border or background: this is a scannable code, not
+   a button, and the card chrome made it read as one.
+   NOTE: the SVG itself still carries a white backdrop behind the modules —
+   that is the QR quiet zone and scanners need its contrast, so it is not
+   chrome and must not be removed. */
+.wec-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: opacity 200ms ease;
+}
+
+.wec-qr:hover {
+    opacity: .78;
+}
+
+.wec-qr:focus-visible {
+    outline: 2px solid var(--wec-gold);
+    outline-offset: 3px;
+}
+
+.wec-qr-img {
+    display: block;
+    width: clamp(78px, 9cqw, 104px);
+    height: auto;
+    /* A QR must stay pixel-crisp at any scale — smoothing the module edges
+       is what makes small codes fail to scan. */
+    image-rendering: pixelated;
+    /* The SVG's own 4-module quiet zone is the scanner's margin; a slight
+       border-radius just softens the white square against the warm page
+       without eating into it. */
+    border-radius: 4px;
+}
+
+.wec-qr-caption {
+    font-family: "Jost", sans-serif;
+    font-size: clamp(9px, .95cqw, 11px);
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--wec-navy);
+    opacity: .72;
+}
+
+.wec-cta {
+    display: inline-flex;
+    /* Shrink to fit its label rather than stretching to the venue column's
+       full width. */
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 48px;
+    padding: 13px clamp(22px, 3vw, 34px);
+    border-radius: 999px;
+    border: 1px solid var(--wec-gold);
+    background: var(--wec-navy);
+    color: #fff;
+    text-decoration: none;
+    font-family: "Jost", sans-serif;
+    font-size: clamp(13px, 1.35cqw, 15px);
+    font-weight: 600;
+    letter-spacing: .04em;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.wec-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .18);
+}
+
+.wec-cta:focus-visible {
+    outline: 2px solid var(--wec-gold);
+    outline-offset: 3px;
+}
+
+/* ---- Narrow layout ----------------------------------------------------- */
+
+/* Below ~560px of CARD width the date rail no longer has room beside the
+   ceremonies, so it becomes a horizontal header above them: the numeral,
+   month and weekday sit on one line and the divider moves to the bottom. */
+@container (max-width: 560px) {
+    .wec-day {
+        grid-template-columns: 1fr;
+        gap: clamp(8px, 2vw, 14px);
+    }
+
+    .wec-date {
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: flex-start;
+        gap: 8px;
+        padding-right: 0;
+        padding-bottom: 10px;
+        border-right: none;
+        border-bottom: 1px solid var(--wec-hairline);
+    }
+
+    .wec-date-num {
+        font-size: clamp(26px, 9cqw, 34px);
+    }
+
+    .wec-date-rule {
+        display: none;
+    }
+
+    .wec-date-weekday {
+        margin-left: auto;
+    }
+
+    /* Not enough width for a centred button with a QR beside it — the empty
+       mirror column would squeeze both. Stack them centred instead. */
+    .wec-venue-actions {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .wec-venue-actions .wec-cta,
+    .wec-venue-actions .wec-qr {
+        grid-column: 1;
+        justify-self: center;
+    }
+}
+
+/* Fallback for browsers without container queries (Safari < 16). Uses the
+   viewport instead; the canvas is viewport-width at every breakpoint, so this
+   is a close enough approximation for the one layout flip that matters. */
+@supports not (container-type: inline-size) {
+    @media (max-width: 640px) {
+        .wec-day {
+            grid-template-columns: 1fr;
+        }
+
+        .wec-date {
+            flex-direction: row;
+            align-items: baseline;
+            justify-content: flex-start;
+            gap: 8px;
+            padding-right: 0;
+            padding-bottom: 10px;
+            border-right: none;
+            border-bottom: 1px solid var(--wec-hairline);
+        }
+
+        .wec-date-rule {
+            display: none;
+        }
+
+        .wec-date-weekday {
+            margin-left: auto;
+        }
+
+        .wec-venue-actions {
+            grid-template-columns: 1fr;
+            justify-items: center;
+        }
+
+        .wec-venue-actions .wec-cta,
+        .wec-venue-actions .wec-qr {
+            grid-column: 1;
+            justify-self: center;
+        }
+    }
+}
+
+/* Respect reduced-motion for the CTA lift and the QR's hover fade. */
+@media (prefers-reduced-motion: reduce) {
+    .wec-cta {
+        transition: none;
+    }
+
+    .wec-cta:hover {
+        transform: none;
+    }
+
+    .wec-qr {
+        transition: none;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   PAGE 2 deity image (Krishna)
+   ---------------------------------------------------------------------------
+   The template authored this slot for a square Ganesha asset: `width: 9%` plus
+   `aspect-ratio: 1.03`, with a per-breakpoint fallback height. The artwork is
+   overridden to its own ratio so the *height* the breakpoint already specifies
+   is preserved and the width follows from it — the image then occupies the
+   same vertical space the Ganesha did and nothing below it moves.
+   `width: auto` is required — the authored `width: 9%` would otherwise win and
+   over-constrain the box.
+
+   IMPORTANT: this ratio must match krishna.webp's real pixel dimensions. It
+   was 528/900 for an earlier tall-portrait Krishna; the current asset is the
+   near-square mandala illustration (879x900 after trimming its transparent
+   margin), so a stale value here stretches or squashes the artwork rather
+   than just resizing it.
+
+   `width` must stay a real length, NOT `auto`. The authored per-breakpoint
+   `height: var(--framer-aspect-ratio-supported, 100px)` looks like it would
+   supply the height, but that variable is set to `auto` further up this
+   stylesheet, so the px fallback never applies and the height resolves to
+   `auto`. Pairing that with `width: auto` leaves the absolutely-positioned
+   box with no sizing source on either axis and it collapses to 0x0 —
+   the image silently disappears. Keeping an explicit width means the
+   aspect-ratio above derives the height from it.
+
+   Widened from the template's 9% (authored for a small square Ganesha badge)
+   so the mandala illustration reads at a comparable visual weight.
+
+   Selector carries .framer-uf450a as well as .framer-deity so it outranks the
+   verbatim Framer rules (same specificity would lose on source order, since
+   framer-components.css also has breakpoint copies later in the cascade). */
+.framer-m7ulU .framer-uf450a.framer-deity {
+    aspect-ratio: 879 / 900;
+    width: 15%;
+    height: auto;
+}
